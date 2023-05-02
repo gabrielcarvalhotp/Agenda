@@ -1,0 +1,79 @@
+﻿unit Agenda.Controller.Utilitarios;
+
+interface
+
+uses
+  Agenda.Controller.Utilitarios.Interfaces, Vcl.Forms, Vcl.StdCtrls, FireDAC.Comp.Client ;
+
+type
+  TControllerUtilitariosFormularios = class(TInterfacedObject,
+    iControllerUtilitariosFormularios)
+  private
+    { private }
+    [weak]
+    FSender : TForm; 
+    FDQuery: TFDQuery;
+  public
+    { public }
+    constructor Create(Sender : TForm);
+    class function New(Sender : TForm): iControllerUtilitariosFormularios;
+    destructor Destroy; override;
+    function PesquisaEmpresa(aValue: TComboBox) : iControllerUtilitariosFormularios;
+    function PesquisaSetor(aValue: TComboBox) : iControllerUtilitariosFormularios;
+  end;
+
+implementation
+
+uses
+  Agenda.Model.Conexao.Connection,
+  Agenda.Model.Conexao.Parametros;
+
+constructor TControllerUtilitariosFormularios.Create(Sender : TForm);
+begin
+  FDQuery := TFDQuery.Create(nil);
+  FDQuery.Connection := TModelConexaoConnection.New(TModelConexaoParametros.New).Connection;
+  FSender := Sender;
+end;
+
+destructor TControllerUtilitariosFormularios.Destroy;
+begin
+  FDQuery.DisposeOf;
+  inherited;
+end;
+
+class function TControllerUtilitariosFormularios.New(Sender : TForm): iControllerUtilitariosFormularios;
+begin
+  result := self.Create(Sender);
+end;
+
+function TControllerUtilitariosFormularios.PesquisaEmpresa(aValue: TComboBox) : iControllerUtilitariosFormularios;
+begin
+  result := self;
+  FDQuery.Close;
+  FDQuery.SQL.Text := ' SELECT DISTINCT TB_AGENDA.EMPRESA FROM  TB_AGENDA ';
+  FDQuery.Open;
+  FDQuery.First;
+  while not FDQuery.eof do
+  begin
+    aValue.AddItem(FDQuery.FieldByName('EMPRESA').AsString, FSender);
+    FDQuery.Next;
+  end;
+  FDQuery.Close;
+end;
+
+function TControllerUtilitariosFormularios.PesquisaSetor(aValue: TComboBox) : iControllerUtilitariosFormularios;
+begin
+  result := self;
+  FDQuery.Close;
+  FDQuery.SQL.Text := ' SELECT DISTINCT TB_AGENDA.SETOR FROM  TB_AGENDA ';
+  FDQuery.Open;
+  FDQuery.First;
+  while not FDQuery.eof do
+  begin
+    aValue.AddItem(FDQuery.FieldByName('SETOR').AsString, FSender);
+    FDQuery.Next;
+  end;
+  FDQuery.Close;
+end;
+
+end.

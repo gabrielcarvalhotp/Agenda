@@ -1,0 +1,135 @@
+unit Agenda.Model.Services;
+
+interface
+uses
+  SimpleInterface,
+  SimpleDAO,
+  SimpleAttributes,
+  SimpleQueryFiredac,
+  System.Generics.Collections,
+  Firedac.Comp.Client,
+  Firedac.Phys.FB,
+  Firedac.Comp.UI,
+  Firedac.Stan.Intf,
+  Firedac.Stan.Option,
+  Firedac.Stan.Error,
+  Firedac.UI.Intf,
+  Firedac.Phys.Intf,
+  Firedac.Stan.Def,
+  Firedac.Stan.Pool,
+  Firedac.Stan.Async,
+  Firedac.Phys,
+  Firedac.Phys.FBDef,
+  Firedac.VCLUI.Wait,
+  Firedac.Phys.IBBase,
+  Firedac.DApt,
+  Data.DB, 
+  Agenda.Model.Interfaces.Conexao,
+  Agenda.Model.Services.Interfaces;
+
+type
+  TModelServicesSimpleORM<T : class, constructor> = class(TInterfacedObject, iService<T>)
+  private
+    { private }
+    FParent : T;
+    FConnection : iModelConexaoConnection;
+    FSimpleConn : iSimpleQuery;
+    FSimpleDAO : iSimpleDAO<T>;
+    FDataSource : TDataSource;
+  public
+    { public }
+    constructor Create(aParent : T);
+    destructor Destroy; override;
+    class function New(aParent : T): iService<T>;
+    function ListarTodos: iService<T>;
+    function ListarPor(aField : string; aValue : variant): iService<T>;
+    function ListarPorId(aValue : integer) : iService<T>;
+    function Inserir: iService<T>;
+    function Atualizar: iService<T>;
+    function Excluir: iService<T>;overload;
+    function Excluir(aField, aValue : string): iService<T>;overload;
+    function DataSource(var aDataSource : TDataSource): iService<T>;
+    function This: T;
+  end;
+
+implementation
+
+uses
+  Agenda.Model.Conexao.Factory;
+
+{ TModelServicesSimpleORM<T> }
+
+function TModelServicesSimpleORM<T>.Atualizar: iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Update(FParent);
+end;
+
+constructor TModelServicesSimpleORM<T>.Create(aParent : T);
+begin
+  FParent := aParent;
+  FDataSource := TDataSource.Create(nil);
+  FConnection := TModelConexaoFactory.New.Connection;
+  FSimpleConn := TSimpleQueryFiredac.New(TFDConnection(FConnection.Conectar.Connection));
+  FSimpleDAO := TSimpleDAO<T>.New(FSimpleConn).DataSource(FDataSource);
+end;
+
+function TModelServicesSimpleORM<T>.DataSource(var aDataSource: TDataSource): iService<T>;
+begin
+  result := self;
+  aDataSource := FDataSource;
+end;
+
+destructor TModelServicesSimpleORM<T>.Destroy;
+begin
+  inherited;
+  FDataSource.DisposeOf;
+end;
+
+function TModelServicesSimpleORM<T>.Excluir(aField, aValue: string): iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Delete(aField, aValue);
+end;
+
+function TModelServicesSimpleORM<T>.Excluir: iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Delete(FParent);
+end;
+
+function TModelServicesSimpleORM<T>.Inserir: iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Insert(FParent);
+end;
+
+function TModelServicesSimpleORM<T>.ListarPor(aField: string; aValue: variant): iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Find(aField, aValue);
+end;
+
+function TModelServicesSimpleORM<T>.ListarPorId(aValue: integer): iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Find(aValue);
+end;
+
+function TModelServicesSimpleORM<T>.ListarTodos: iService<T>;
+begin
+  result := self;
+  FSimpleDAO.Find(false);
+end;
+
+class function TModelServicesSimpleORM<T>.New(aParent : T): iService<T>;
+begin
+  result := self.Create(aParent);
+end;
+
+function TModelServicesSimpleORM<T>.This: T;
+begin
+  Result := FParent;
+end;
+
+end.

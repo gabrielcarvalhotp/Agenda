@@ -1,0 +1,50 @@
+unit Agenda.Controller.Conexao.DataSet;
+
+interface
+
+uses
+  Agenda.Controller.Conexao.Interfaces,
+  Agenda.Model.Conexao.Interfaces;
+
+type
+  TControllerConexaoDataSet = class(TInterfacedObject,
+    iControllerFactoryDataSet)
+  private
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iControllerFactoryDataSet;
+    function FDataSet(aValue: iModelConexaoInterfacesConnection)
+      : iModelConexaoInterfacesDataSet;
+  end;
+
+implementation
+
+uses
+  Agenda.Model.Conexao.DataSet;
+
+constructor TControllerConexaoDataSet.Create;
+begin
+
+end;
+
+function TControllerConexaoDataSet.FDataSet
+  (aValue: iModelConexaoInterfacesConnection): iModelConexaoInterfacesDataSet;
+begin
+
+  result := TModelConexaoDataSet.New(aValue);
+end;
+
+destructor TControllerConexaoDataSet.Destroy;
+begin
+
+  inherited;
+end;
+
+class function TControllerConexaoDataSet.New: iControllerFactoryDataSet;
+begin
+  result := self.Create;
+end;
+
+end.

@@ -1,0 +1,257 @@
+unit Agenda.View.Principal;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Data.DB,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Menus,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.Buttons,
+  Vcl.Imaging.pngimage,
+  Vcl.ComCtrls,
+  Agenda.Controller.Entidades.Interfaces,
+  Agenda.Controller.Rtti.Utilitarios;
+
+type
+  TFrmPrincipal = class(TForm)
+    DataSource1: TDataSource;
+    pnlMain: TPanel;
+    pnlGrid: TPanel;
+    Panel1: TPanel;
+    Empresa: TLabel;
+    cbxEmpresa: TComboBox;
+    Label1: TLabel;
+    cbxSetor: TComboBox;
+    Label2: TLabel;
+    edtNomePesquisa: TEdit;
+    Panel2: TPanel;
+    ImageArtvac: TImage;
+    CheckBox1: TCheckBox;
+    PageControl1: TPageControl;
+    TabGrid: TTabSheet;
+    TabConsulta: TTabSheet;
+    DBGridPesquisa: TDBGrid;
+    Panel8: TPanel;
+    Panel3: TPanel;
+    Panel5: TPanel;
+    Label13: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label14: TLabel;
+    Label12: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Panel6: TPanel;
+    Shape1: TShape;
+    [Bind('Empresa', 'Empresa', 10)]
+    edtEmpresa: TEdit;
+    Panel12: TPanel;
+    Shape8: TShape;
+    [Bind('Nome', 'Nome', 10)]
+    edtNome: TEdit;
+    Panel7: TPanel;
+    Shape2: TShape;
+    [Bind('Setor', 'Setor', 10)]
+    edtSetor: TEdit;
+    Panel11: TPanel;
+    Shape3: TShape;
+    [Bind('Funcao', 'Funcao', 10)]
+    edtFuncao: TEdit;
+    Panel24: TPanel;
+    Shape7: TShape;
+    [Bind('Cod_Agenda', 'Cod_Agenda', 10), NotEdit]
+    edtCodigo: TEdit;
+    Panel4: TPanel;
+    Shape4: TShape;
+    [Bind('Ramal', 'Ramal', 10)]
+    edtRamal: TEdit;
+    Panel9: TPanel;
+    Shape5: TShape;
+    [Bind('Celular_Empresa', 'Celular Empresarial', 10)]
+    edtCelularEmpresa: TEdit;
+    Panel10: TPanel;
+    Shape6: TShape;
+    [Bind('Celular_Pessoal', 'Celular Pessoal', 10)]
+    edtCelularPessoal: TEdit;
+    Panel13: TPanel;
+    Shape9: TShape;
+    [Bind('Email1', 'Email Principal', 10)]
+    edtEmailPrimario: TEdit;
+    Panel14: TPanel;
+    Shape10: TShape;
+    [Bind('Email2', 'Email Alternativo', 100)]
+    edtEmailSecundario: TEdit;
+    Panel15: TPanel;
+    Shape11: TShape;
+    Panel16: TPanel;
+    Panel20: TPanel;
+    Shape15: TShape;
+    btnDeletar: TSpeedButton;
+    Panel17: TPanel;
+    Shape12: TShape;
+    btnIncluir: TSpeedButton;
+    Panel18: TPanel;
+    Shape13: TShape;
+    btnAlterar: TSpeedButton;
+    Panel21: TPanel;
+    Shape16: TShape;
+    btnCancelar: TSpeedButton;
+    Panel22: TPanel;
+    Panel23: TPanel;
+    Shape17: TShape;
+    btnSair: TSpeedButton;
+    Panel19: TPanel;
+    Shape14: TShape;
+    btnSalvar: TSpeedButton;
+    procedure DBGridPesquisaDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure CheckBox1Click(Sender: TObject);
+    procedure DBGridPesquisaCellClick(Column: TColumn);
+    procedure btnSairClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure DataSource1DataChange(Sender: TObject; Field: TField);
+    procedure btnDeletarClick(Sender: TObject);
+    procedure btnIncluirClick(Sender: TObject);
+    procedure btnAlterarClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure edtNomePesquisaChange(Sender: TObject);
+  private
+    { Private declarations }
+    FController: iControllerEntidades;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmPrincipal: TFrmPrincipal;
+
+implementation
+
+uses
+  Agenda.View.Configuracoes,
+  Agenda.Controller.Utilitarios,
+  Agenda.Controller.Entidades, System.SysUtils;
+
+{$R *.dfm}
+
+procedure TFrmPrincipal.CheckBox1Click(Sender: TObject);
+var
+  FrmParametros: TFrmParametros;
+begin
+  FrmParametros := TFrmParametros.Create(nil);
+  try
+    FrmParametros.ShowModal;
+  finally
+    FrmParametros.DisposeOf;
+  end;
+end;
+
+procedure TFrmPrincipal.DataSource1DataChange(Sender: TObject; Field: TField);
+begin
+  TRttiUtils.DataSetToForm(DataSource1.DataSet, Self);
+end;
+
+procedure TFrmPrincipal.DBGridPesquisaCellClick(Column: TColumn);
+begin
+  TRttiUtils.ReadOnly(Self, true);
+  PageControl1.ActivePage := TabConsulta;
+end;
+
+procedure TFrmPrincipal.DBGridPesquisaDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if odd(DBGridPesquisa.DataSource.DataSet.RecNo) then
+  begin
+    DBGridPesquisa.Canvas.Brush.Color := $003AC17E;
+    DBGridPesquisa.DefaultDrawDataCell(Rect, Column.Field, State)
+  end
+  else
+  begin
+    DBGridPesquisa.Canvas.Brush.Color := $00CFCFCF;
+    DBGridPesquisa.DefaultDrawDataCell(Rect, Column.Field, State)
+  end;
+end;
+
+procedure TFrmPrincipal.edtNomePesquisaChange(Sender: TObject);
+begin
+  FController.Agenda.PesquisaPersonalizada(cbxEmpresa.Text ,cbxSetor.Text, edtNomePesquisa.Text);
+end;
+
+procedure TFrmPrincipal.FormCreate(Sender: TObject);
+begin
+  FController := TControllerEntidades.New;
+  FController.Agenda.Build.DataSource(DataSource1).ListarTodos;
+  PageControl1.ActivePage := TabGrid;
+  TControllerUtilitarios.New(self).PesquisaEmpresa(cbxEmpresa).PesquisaSetor(cbxSetor);
+end;
+
+procedure TFrmPrincipal.btnAlterarClick(Sender: TObject);
+begin
+  TRttiUtils.ReadOnly(Self, false);
+  btnIncluir.Enabled := false;
+  btnDeletar.Enabled := false;
+end;
+
+procedure TFrmPrincipal.btnCancelarClick(Sender: TObject);
+begin
+  TRttiUtils.DataSetToForm(DataSource1.DataSet, Self);
+  TRttiUtils.ReadOnly(Self, true);
+  btnDeletar.Enabled := true;
+  btnIncluir.Enabled := true;
+  btnAlterar.Enabled := true;
+  btnCancelar.Enabled := true;
+  btnSalvar.Enabled := true;  
+end;
+
+procedure TFrmPrincipal.btnDeletarClick(Sender: TObject);
+begin
+  FController.Agenda.PreencherEntidade(Self).Build.Excluir;
+  btnSairClick(btnSair);
+end;
+
+procedure TFrmPrincipal.btnSalvarClick(Sender: TObject);
+begin
+  FController.Agenda.PreencherEntidade(Self);
+  if edtCodigo.Text = '' then
+    FController.Agenda.Build.Inserir
+  else
+    FController.Agenda.Build.Atualizar;
+  btnSairClick(btnSair);
+end;
+
+procedure TFrmPrincipal.btnIncluirClick(Sender: TObject);
+begin
+  TRttiUtils.ReadOnly(Self, false);
+  TRttiUtils.ClearComponent(Self);
+  btnAlterar.Enabled := false;
+  btnDeletar.Enabled := false;
+  btnSair.Enabled := false;
+end;
+
+procedure TFrmPrincipal.btnSairClick(Sender: TObject);
+begin
+  PageControl1.ActivePage := TabGrid;
+  FController.Agenda.Build.DataSource(DataSource1).ListarTodos;
+  btnDeletar.Enabled := true;
+  btnIncluir.Enabled := true;
+  btnAlterar.Enabled := true;
+  btnCancelar.Enabled := true;
+  btnSalvar.Enabled := true;
+end;
+
+end.

@@ -1,0 +1,25 @@
+unit Agenda.Model.Services.Interfaces;
+
+interface
+
+uses
+  Data.DB;
+
+type
+  iService<T: class> = interface
+    ['{140F1C5C-A0BB-488E-BE23-2DDC48238E42}']
+    function ListarTodos: iService<T>;
+    function ListarPor(aField: string; aValue: variant): iService<T>;
+    function ListarPorId(aValue: integer): iService<T>;
+    function Inserir: iService<T>;
+    function Atualizar: iService<T>;
+    function Excluir: iService<T>; overload;
+    function Excluir(aField, aValue: string): iService<T>; overload;
+    function DataSource(aDataSource: TDataSource): iService<T>;
+    function This: T;
+    function PesquisaPersonalizada(aSql : string) : iService<T>;
+  end;
+
+implementation
+
+end.

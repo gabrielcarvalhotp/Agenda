@@ -1,0 +1,62 @@
+unit Agenda.Model.Entidades.Agenda;
+
+interface
+
+type
+
+  [Tabela('TB_AGENDA')]
+  TTB_Agenda = class
+  private
+    FFuncao: string;
+    FCelular_Empresa: string;
+    FCod_Agenda: integer;
+    FEmpresa: string;
+    FRamal: string;
+    FNome: string;
+    FEmail2: string;
+    FCelular_Pessoal: string;
+    FSetor: string;
+    FEmail1: string;
+    { private }
+  public
+    { public }
+    constructor Create;
+    destructor Destroy; override;
+    [Campo('COD_AGENDA'), Pk, AutoInc]
+    property Cod_Agenda: integer read FCod_Agenda write FCod_Agenda;
+    [Campo('EMPRESA')]
+    property Empresa: string read FEmpresa write FEmpresa;
+    [Campo('SETOR')]
+    property Setor: string read FSetor write FSetor;
+    [Campo('NOME')]
+    property Nome: string read FNome write FNome;
+    [Campo('FUNCAO')]
+    property Funcao: string read FFuncao write FFuncao;
+    [Campo('RAMAL')]
+    property Ramal: string read FRamal write FRamal;
+    [Campo('CELULAR_EMPRESA')]
+    property Celular_Empresa: string read FCelular_Empresa write FCelular_Empresa;
+    [Campo('CELULAR_PESSOAL')]
+    property Celular_Pessoal: string read FCelular_Pessoal write FCelular_Pessoal;
+    [Campo('EMAIL1')]
+    property Email1: string read FEmail1 write FEmail1;
+    [Campo('EMAIL2')]
+    property Email2: string read FEmail2 write FEmail2;
+  end;
+
+implementation
+
+{ TClasse }
+
+constructor TTB_Agenda.Create;
+begin
+
+end;
+
+destructor TTB_Agenda.Destroy;
+begin
+  inherited;
+
+end;
+
+end.

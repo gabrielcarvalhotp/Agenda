@@ -1,0 +1,30 @@
+unit Agenda.Model.Entidades.Pessoas;
+
+interface
+
+type
+  TClasse = class
+  private
+    { private }
+  public
+    { public }
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+{ TClasse }
+
+constructor TClasse.Create;
+begin
+
+end;
+
+destructor TClasse.Destroy;
+begin
+  inherited;
+
+end;
+
+end.

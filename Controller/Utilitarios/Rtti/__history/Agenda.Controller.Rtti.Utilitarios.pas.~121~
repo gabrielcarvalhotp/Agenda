@@ -1,0 +1,308 @@
+unit Agenda.Controller.Rtti.Utilitarios;
+
+interface
+
+uses
+  Vcl.Forms, Agenda.Controller.Entidades.Interfaces, Data.DB, System.Classes;
+
+type
+  Params = class(TCustomAttribute)
+  private
+    FParamName: string;
+  public
+    constructor Create(aParamName: string);
+    property ParamName: string read FParamName write FParamName;
+  end;
+  
+  Bind = class(TCustomAttribute)
+  private
+    FField: String;
+    FDisplayLabel: String;
+    FDisplayWidth: Integer;
+    procedure SetField(const Value: String);
+    procedure SetDisplayLabel(const Value: String);
+    procedure SetDisplayWidth(const Value: Integer);
+  public
+    constructor Create(aField: String; aDisplayLabel: String; aDisplayWidth: Integer);
+    property Field: String read FField write SetField;
+    property DisplayLabel: String read FDisplayLabel write SetDisplayLabel;
+    property DisplayWidth: Integer read FDisplayWidth write SetDisplayWidth;
+  end;
+
+  TRttiUtils = class
+    class procedure GetParams(const aForm: TForm);
+    class procedure SetParams(const aForm: TForm);
+    class procedure DataSetToForm(aDataSet: TDataSet; aForm: TForm);
+    class procedure ClearComponent(aForm : TForm);
+    class procedure ReadOnly(aForm : TForm; aValue : boolean);
+  end;
+
+  NotEdit = class(TCustomAttribute)
+  end;
+
+  TRttiUtilsEntity<T : class> = class
+   private
+    
+   public
+    class procedure FormToEntity(Sender: TForm; aEntity: T);
+  end;
+
+implementation
+
+uses
+  System.Rtti,
+  LocalCache4D,
+  Vcl.StdCtrls, Agenda.Model.Entidades.Agenda, Agenda.Controller.Dto.Agenda;
+  
+{ Params }
+
+constructor Params.Create(aParamName: string);
+begin
+  FParamName := aParamName;
+end;
+
+{ Bind }
+
+constructor Bind.Create(aField: String; aDisplayLabel: String;
+  aDisplayWidth: Integer);
+begin
+  FField := aField;
+  FDisplayLabel := aDisplayLabel;
+  FDisplayWidth := aDisplayWidth;
+end;
+
+procedure Bind.SetDisplayLabel(const Value: String);
+begin
+  FDisplayLabel := Value;
+end;
+
+procedure Bind.SetDisplayWidth(const Value: Integer);
+begin
+  FDisplayWidth := Value;
+end;
+
+procedure Bind.SetField(const Value: String);
+begin
+  FField := Value;
+end;
+
+{ TRttiUtils }
+
+class procedure TRttiUtils.GetParams(const aForm: TForm);
+var
+  ctxContext: TRttiContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+begin
+  ctxContext := TRttiContext.Create;
+  try
+    typRtti := ctxContext.GetType(aForm.classType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Params then
+        begin
+          Component := aForm.FindComponent(fldRtti.Name);
+          LocalCache.LoadDatabase('Agenda.lc4');
+          if Component is TEdit then
+          begin
+            try
+              TEdit(Component).Text := LocalCache.Instance('Parametros')
+                .GetItem(Params(cusAttr).ParamName);
+            except
+              Continue;
+            end;
+          end;
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end;
+end;
+
+class procedure TRttiUtils.ReadOnly(aForm: TForm; aValue : boolean);
+var
+  ctxContext: TRTTIContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+begin
+  ctxContext := TRTTIContext.Create;
+  try
+    typRtti := ctxContext.GetType(aForm.ClassType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Bind then
+        begin
+          if Component is TEdit then
+          begin
+            Component := aForm.FindComponent(fldRtti.Name);
+            if cusAttr is NotEdit then
+              TEdit(Component).ReadOnly := false
+            else
+              TEdit(Component).ReadOnly := aValue;   
+          end;
+          
+
+          
+            TEdit(Component).ReadOnly := aValue; 
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end; 
+end;
+
+class procedure TRttiUtils.SetParams(const aForm: TForm);
+var
+  ctxContext: TRttiContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+begin
+  ctxContext := TRttiContext.Create;
+  try
+    typRtti := ctxContext.GetType(aForm.classType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Params then
+        begin
+          Component := aForm.FindComponent(fldRtti.Name);
+          LocalCache.LoadDatabase('Agenda.lc4');
+          begin
+            if Component is TEdit then
+            begin
+              LocalCache.Instance('Parametros')
+                .SetItem(Params(cusAttr).ParamName, TEdit(Component).Text)
+                .SaveToStorage('Agenda.lc4');
+            end;
+          end;
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end;
+end;
+
+{ TRttiUtilsEntity<T> }
+
+class procedure TRttiUtilsEntity<T>.FormToEntity(Sender: TForm; aEntity: T);
+var
+  ctxContext: TRttiContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+
+  ctxRttiEntity: TRttiContext;
+  typRttiEntity: TRttiType;
+  metRttiEntity: TArray<TRttiMethod>;
+  Params : array of TValue;
+
+  retorno : iInterface;
+  begin
+  ctxContext := TRttiContext.Create;
+  try
+    typRtti := ctxContext.GetType(Sender.classType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Bind then
+        begin
+          Component := Sender.FindComponent(fldRtti.Name);
+          ctxRttiEntity := TRttiContext.Create;
+          try
+            if aEntity is TControllerDtoAgenda then
+            begin
+              typRttiEntity := ctxRttiEntity.GetType(TControllerDtoAgenda(aEntity).ClassType);
+            end;
+            
+            metRttiEntity := typRttiEntity.GetMethods(Bind(cusAttr).FField);
+            if Component is TEdit then
+            begin
+              if TEdit(Component).Text = '' then
+                Continue;
+              SetLength(Params, 1);
+              Params[0] := TEdit(Component).Text; 
+              metRttiEntity[0].Invoke(aEntity, Params);
+            end;
+          finally
+            ctxRttiEntity.Free;
+          end;
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end;
+
+end;
+
+{ TRTTIUtils }
+
+class procedure TRttiUtils.ClearComponent(aForm : TForm);
+var
+  ctxContext: TRTTIContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+begin
+  ctxContext := TRTTIContext.Create;
+  try
+    typRtti := ctxContext.GetType(aForm.ClassType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Bind then
+        begin
+          Component := aForm.FindComponent(fldRtti.Name);
+
+          if Component is TEdit then
+            TEdit(Component).Text := '';  
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end;
+end;
+
+class procedure TRTTIUtils.DataSetToForm(aDataSet: TDataSet; aForm: TForm);
+var
+  ctxContext: TRTTIContext;
+  typRtti: TRttiType;
+  fldRtti: TRttiField;
+  cusAttr: TCustomAttribute;
+  Component: TComponent;
+begin
+  ctxContext := TRTTIContext.Create;
+  try
+    typRtti := ctxContext.GetType(aForm.ClassType);
+    for fldRtti in typRtti.GetFields do
+      for cusAttr in fldRtti.GetAttributes do
+      begin
+        if cusAttr is Bind then
+        begin
+          Component := aForm.FindComponent(fldRtti.Name);
+
+          if Component is TEdit then
+            TEdit(Component).Text := aDataSet.FieldByName(Bind(cusAttr).Field).AsString;
+
+          aDataSet.FieldByName(Bind(cusAttr).Field).DisplayLabel := Bind(cusAttr).DisplayLabel;
+          aDataSet.FieldByName(Bind(cusAttr).Field).DisplayWidth := Bind(cusAttr).DisplayWidth;
+        end;
+      end;
+  finally
+    ctxContext.Free;
+  end;
+end;
+
+
+
+
+end.

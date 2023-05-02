@@ -1,0 +1,111 @@
+unit Agenda.View.Configuracoes;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.Imaging.pngimage, 
+  SimpleAttributes,
+  Agenda.Controller.Entidades.Interfaces;
+
+type
+  TFrmParametros = class(TForm)
+    pnlContainer: TPanel;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Image1: TImage;
+    SpeedButton1: TSpeedButton;
+    Panel3: TPanel;
+    Image2: TImage;
+    SpeedButton2: TSpeedButton;
+    Panel4: TPanel;
+    Image3: TImage;
+    SpeedButton3: TSpeedButton;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label4: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Panel9: TPanel;
+    Shape2: TShape;
+    [Params('Driverid')]
+    edtTipo: TEdit;
+    Panel7: TPanel;
+    Shape1: TShape;
+    [Params('Database')]
+    edtPath: TEdit;
+    Panel11: TPanel;
+    Shape4: TShape;
+    [Params('Username')]
+    edtUserName: TEdit;
+    Panel14: TPanel;
+    Shape6: TShape;
+    [Params('Password')]
+    edtPassword: TEdit;
+    Panel15: TPanel;
+    Shape7: TShape;
+    [Params('Porta')]
+    edtPorta: TEdit;
+    Panel17: TPanel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label11: TLabel;
+    Panel18: TPanel;
+    Shape9: TShape;
+    [Params('Schema')]
+    edtSchema: TEdit;
+    Panel19: TPanel;
+    Shape10: TShape;
+    [Params('Locking')]
+    edtLocking: TEdit;
+    Panel21: TPanel;
+    Shape12: TShape;
+    [Params('Server')]
+    edtServidor: TEdit;
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+  private
+    FController: iControllerEntidades;
+  public
+    { Public declarations }
+  end;
+
+implementation
+
+uses
+  Agenda.Controller.Entidades, SimpleUtil;
+
+{$R *.dfm}
+
+procedure TFrmParametros.FormCreate(Sender: TObject);
+begin
+  FController := TControllerEntidades.New;
+  FController.Paramentros;
+  TSimpleUtil.SetEditParamsValue(self, TCustomAttribute(FormToLocal));
+end;
+
+procedure TFrmParametros.SpeedButton1Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TFrmParametros.SpeedButton2Click(Sender: TObject);
+begin
+  TSimpleUtil.SetEditParamsValue(self, TCustomAttribute(Local));
+end;
+
+end.

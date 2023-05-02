@@ -1,0 +1,7 @@
+unit Agenda.Controller.Dto.Interfaces;
+
+interface
+
+implementation
+
+end.

@@ -1,0 +1,7 @@
+unit Agenda.Controller.Entidades.Interfaces;
+
+interface
+
+implementation
+
+end.

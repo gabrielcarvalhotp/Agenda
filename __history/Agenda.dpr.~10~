@@ -1,0 +1,17 @@
+﻿program Agenda;
+
+uses
+  Vcl.Forms,
+  Agenda.View.Principal in 'View\Agenda.View.Principal.pas' {Form2},
+  Agenda.View.Configuracoes in 'View\Agenda.View.Configuracoes.pas' {PageConfiguracoes},
+  Agenda.Model.Interfaces.Conexao in 'Model\Conexao\Interfaces\Agenda.Model.Interfaces.Conexao.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TPageConfiguracoes, PageConfiguracoes);
+  Application.Run;
+end.

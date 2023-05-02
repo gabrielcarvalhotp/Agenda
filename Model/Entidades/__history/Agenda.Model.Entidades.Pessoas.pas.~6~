@@ -1,0 +1,42 @@
+unit Agenda.Model.Entidades.Pessoas;
+
+interface
+
+type
+
+  [TABELA('TB_AGENDA')]
+  TTB_Agenda = class
+  private
+    { private }
+  public
+    { public }
+    constructor Create;
+    destructor Destroy; override;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Empresa: type read Empresa: write Empresa:;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+    property Cod_Agenda: type read Cod_Agenda write Cod_Agenda;
+  end;
+
+implementation
+
+{ TClasse }
+
+constructor TTB_Agenda.Create;
+begin
+
+end;
+
+destructor TTB_Agenda.Destroy;
+begin
+  inherited;
+
+end;
+
+end.

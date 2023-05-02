@@ -1,0 +1,259 @@
+unit Agenda.Model.Entidades.Agenda;
+
+interface
+
+uses
+  Agenda.Model.Entidades.Interfaces.Agenda, Agenda.Model.Conexao.Interfaces, 
+  Vcl.StdCtrls;
+
+type
+  TModelEntidadesAgenda = class(TInterfacedObject, iModelEntidadesInterfacesAgenda)
+  private
+    { private }
+    FDataSet : iModelConexaoInterfacesDataSet;
+    FCod_Agenda : integer;
+    FEmpresa : string;
+    FSetor : string;
+    FNome : string;
+    FFuncao : string;
+    FRamail : string;
+    FCelular_Empresa : string;
+    FCelular_Pessoal : string;
+    FEmail1 : string;
+    FEmail2 : string;
+  public
+    { public }
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModelEntidadesInterfacesAgenda;
+    function Cod_Agenda(aValue: string) : iModelEntidadesInterfacesAgenda; overload;
+    function Empresa(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Setor(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Nome(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Funcao(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Ramal(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Celular_Empresa(aValue: string) : iModelEntidadesInterfacesAgenda; overload;
+    function Celular_Pessoal(aValue: string) : iModelEntidadesInterfacesAgenda; overload;
+    function Email1(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Email2(aValue: string): iModelEntidadesInterfacesAgenda; overload;
+    function Cod_Agenda: integer ; overload;
+    function Empresa: string; overload;
+    function Setor: string; overload;
+    function Nome: string; overload;
+    function Funcao: string; overload;
+    function Ramal: string; overload;
+    function Celular_Empresa: string; overload;
+    function Celular_Pessoal: string; overload;
+    function Email1: string; overload;
+    function Email2: string; overload;
+    function DataSet: iModelConexaoInterfacesDataSet;
+    function Pesquisa(aEmpresa, aSetor, aNome : string ) : iModelEntidadesInterfacesAgenda;
+    function CBEmpresa(Sender : TObject ;aValue : TComboBox) : iModelEntidadesInterfacesAgenda;
+    function CBSetor(Sender : TObject ;aValue : TComboBox) : iModelEntidadesInterfacesAgenda;
+  end;
+
+implementation
+
+uses
+  Agenda.Model.Conexao.DataSet, Agenda.Controller.Conexao.Connection, 
+  System.SysUtils;
+
+{ TModelEntidadesAgenda }
+
+function TModelEntidadesAgenda.Celular_Empresa(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FCelular_Empresa := aValue;
+end;
+
+function TModelEntidadesAgenda.CBEmpresa(Sender : TObject ;aValue: TComboBox): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FDataSet
+    .Close
+    .Clear
+    .Sql(' SELECT DISTINCT '+
+         '   TB_AGENDA.EMPRESA '+
+         ' FROM '+
+         '   TB_AGENDA ')
+    .Active;
+    aValue.Items.Clear;
+    aValue.AddItem('', sender);
+    while not FDataSet.DataSet.Eof do
+    begin
+      aValue.AddItem(FDataSet.FieldByName('EMPRESA'), Sender);
+      FDataSet.DataSet.Next; 
+    end;
+end;
+
+function TModelEntidadesAgenda.CBSetor(Sender: TObject; aValue: TComboBox): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FDataSet
+    .Close
+    .Clear
+    .Sql(' SELECT DISTINCT '+
+         '   TB_AGENDA.SETOR '+
+         ' FROM '+
+         '   TB_AGENDA ')
+    .Active;
+    aValue.Items.Clear;
+    aValue.AddItem('', sender);
+    while not FDataSet.DataSet.Eof do
+    begin
+      aValue.AddItem(FDataSet.FieldByName('SETOR'), Sender);
+      FDataSet.DataSet.Next; 
+    end;
+end;
+
+function TModelEntidadesAgenda.Celular_Empresa: string;
+begin
+  result := FCelular_Empresa;
+end;
+
+function TModelEntidadesAgenda.Celular_Pessoal: string;
+begin
+  result := FCelular_Pessoal;
+end;
+
+function TModelEntidadesAgenda.Celular_Pessoal(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FCelular_Pessoal := aValue;
+end;
+
+function TModelEntidadesAgenda.Cod_Agenda(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FCod_Agenda := StrToInt(aValue);
+end;
+
+function TModelEntidadesAgenda.Cod_Agenda: integer;
+begin
+  result := FCod_Agenda; 
+end;
+
+constructor TModelEntidadesAgenda.Create;
+begin
+  FDataSet := TModelConexaoDataSet.New(TControllerConexaoConectar.New.Conectar);
+  FDataSet
+    .Close
+    .Clear
+    .Sql(' SELECT * FROM TB_AGENDA ')
+    .Active;
+end;
+
+function TModelEntidadesAgenda.DataSet: iModelConexaoInterfacesDataSet;
+begin
+  result := FDataSet;
+end;
+
+destructor TModelEntidadesAgenda.Destroy;
+begin
+  inherited;
+
+end;
+
+function TModelEntidadesAgenda.Email1(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FEmail1 := aValue;
+end;
+
+function TModelEntidadesAgenda.Email1: string;
+begin
+  result := FEmail1;
+end; 
+
+function TModelEntidadesAgenda.Email2: string;
+begin
+  result := FEmail2;
+end;
+
+function TModelEntidadesAgenda.Email2(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FEmail2 := aValue;
+end;
+
+function TModelEntidadesAgenda.Empresa: string;
+begin
+  result := FEmpresa;
+end;
+
+function TModelEntidadesAgenda.Empresa(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FEmpresa := aValue;
+end;
+
+function TModelEntidadesAgenda.Funcao: string;
+begin
+  result := FFuncao;
+end;
+
+function TModelEntidadesAgenda.Funcao(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FFuncao := aValue; 
+end;
+
+class function TModelEntidadesAgenda.New: iModelEntidadesInterfacesAgenda;
+begin
+  result := self.Create;
+end;
+
+function TModelEntidadesAgenda.Nome: string;
+begin
+  result := FNome;
+end;
+
+function TModelEntidadesAgenda.Pesquisa(aEmpresa, aSetor, aNome: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FDataSet
+    .Close
+    .Clear
+    .Sql(' SELECT '+
+         ' * '+
+         ' FROM '+ 
+         '   TB_AGENDA '+
+         ' WHERE '+
+         '   TB_AGENDA.EMPRESA LIKE :pEmpresa' +
+         ' AND '+
+         '   TB_AGENDA.SETOR LIKE :pSetor'+
+         ' AND '+
+         '   TB_AGENDA.NOME LIKE :pNome')
+    .ParamsByName('pEmpresa', ('%'+aEmpresa+'%')) 
+    .Active;
+end;
+
+function TModelEntidadesAgenda.Nome(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FNome := aValue;
+end;
+
+function TModelEntidadesAgenda.Ramal: string;
+begin
+  result := FRamail;
+end;
+
+function TModelEntidadesAgenda.Ramal(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FRamail := aValue;
+end;
+
+function TModelEntidadesAgenda.Setor(aValue: string): iModelEntidadesInterfacesAgenda;
+begin
+  result := self;
+  FSetor := aValue;
+end;
+
+function TModelEntidadesAgenda.Setor: string;
+begin
+  result := FSetor;
+end;
+
+end.
